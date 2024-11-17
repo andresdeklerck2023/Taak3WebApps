@@ -1,41 +1,33 @@
-name: Deploy to GitHub Pages
+name: Deploy to Staging
 
 on:
   push:
     branches:
-      - main
-      - stage
+      - stage  # Alleen wanneer er naar de stage branch gepusht wordt
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest  # Gebruik een Ubuntu machine voor de build
 
     steps:
-      # Stap 1: Checkout de code van de repository
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2  # Haal de laatste versie van je code
 
-      # Stap 2: Stel de omgevingsvariabelen in voor de achtergrondkleur
-      - name: Set background color environment variable
+      - name: Set background color from secret
+        run: echo "BACKGROUND_COLOR=${{ secrets.STAGE_BG_COLOR }}" >> $GITHUB_ENV
+        # Haal de achtergrondkleur secret uit GitHub Secrets en stel deze in als omgevingsvariabele
+
+      - name: Build website (bijvoorbeeld met npm)
         run: |
-          if [ "${{ github.ref }}" == "refs/heads/stage" ]; then
-            echo "STAGE_BG_COLOR=${{ secrets.STAGE_BG_COLOR }}" >> $GITHUB_ENV
-          else
-            echo "PRODUCTION_BG_COLOR=${{ secrets.PRODUCTION_BG_COLOR }}" >> $GITHUB_ENV
-          fi
+          # Als je een build proces hebt, zoals npm, dan moet je de build hier uitvoeren
+          # Bijvoorbeeld:
+          npm install
+          npm run build
 
-      # Stap 3: Wijzig de index.html om de achtergrondkleur aan te passen
-      - name: Modify background color in index.html
-        run: |
-          if [ "${{ github.ref }}" == "refs/heads/stage" ]; then
-            sed -i 's|<body>|<body style="background-color: ${STAGE_BG_COLOR};">|' ./index.html
-          else
-            sed -i 's|<body>|<body style="background-color: ${PRODUCTION_BG_COLOR};">|' ./index.html
-          fi
-
-      # Stap 4: Deploy naar GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@v3  # Gebruik de action voor deployment naar gh-pages
         with:
-          publish_dir: ./  # Dit moet het pad zijn waar je index.html bestand zich bevindt
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          deploy_key: ${{ secrets.GH_TOKEN }}  # Je deploy sleutel (GitHub Token)
+          publish_dir: ./build  # De directory waar je website na de build zich bevindt
+          user_name: 'GitHub Actions'  # Naam van de gebruiker
+          user_email: 'actions@github.com'  # E-mail van de gebruiker
