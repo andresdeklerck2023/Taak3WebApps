@@ -24,11 +24,7 @@ jobs:
             echo "PRODUCTION_BG_COLOR=${{ secrets.PRODUCTION_BG_COLOR }}" >> $GITHUB_ENV
           fi
 
-      # Stap 3: Build de applicatie (indien nodig)
-      - name: Build the project
-        run: npm run build
-
-      # Stap 4: Pas de achtergrondkleur aan in de index.html
+      # Stap 3: Modify the index.html to set the background color
       - name: Modify background color in index.html
         run: |
           if [ "${{ github.ref }}" == "refs/heads/stage" ]; then
@@ -37,9 +33,9 @@ jobs:
             sed -i 's|<body>|<body style="background-color: ${PRODUCTION_BG_COLOR};">|' ./index.html
           fi
 
-      # Stap 5: Deploy naar GitHub Pages
+      # Stap 4: Deploy naar GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          publish_dir: ./  # Hier specificeer je de map waar de HTML-bestanden staan
+          publish_dir: ./  # Zorg ervoor dat dit het pad is waar je index.html staat
           github_token: ${{ secrets.GITHUB_TOKEN }}
