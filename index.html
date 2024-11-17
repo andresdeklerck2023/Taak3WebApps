@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productie Omgeving</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <h1>Welkom in de Productie-omgeving</h1>
+  <p>Dit is de live versie van de applicatie!</p>
+
+  <script>
+    // Achtergrondkleur instellen via omgevingsvariabele
+    const bgColor = process.env.BACKGROUND_COLOR || 'white';  // default is wit
+    document.body.style.backgroundColor = bgColor;
+  </script>
+  <script src="assets/script.js"></script>
+</body>
+</html>
