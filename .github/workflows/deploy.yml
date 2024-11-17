@@ -38,4 +38,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           publish_dir: ./  # Dit moet het pad zijn waar je index.html bestand zich bevindt
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_TOKEN }}
