@@ -24,6 +24,7 @@ jobs:
             echo "PRODUCTION_BG_COLOR=${{ secrets.PRODUCTION_BG_COLOR }}" >> $GITHUB_ENV
           fi
 
+
       # Stap 3: Modify the index.html to set the background color
       - name: Modify background color in index.html
         run: |
