@@ -11,23 +11,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2  # Haal de laatste versie van je code
+        uses: actions/checkout@v2
 
       - name: Set background color from secret
         run: echo "BACKGROUND_COLOR=${{ secrets.PRODUCTION_BG_COLOR }}" >> $GITHUB_ENV
-        # Haal de achtergrondkleur secret uit GitHub Secrets en stel deze in als omgevingsvariabele
-
-      - name: Build website (bijvoorbeeld met npm)
-        run: |
-          # Als je een build proces hebt, zoals npm, dan moet je de build hier uitvoeren
-          # Bijvoorbeeld:
-          npm install
-          npm run build
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3  # Gebruik de action voor deployment naar gh-pages
         with:
           deploy_key: ${{ secrets.GH_TOKEN }}  # Je deploy sleutel (GitHub Token)
-          publish_dir: ./build  # De directory waar je website na de build zich bevindt
-          user_name: 'GitHub Actions'  # Naam van de gebruiker
-          user_email: 'actions@github.com'  # E-mail van de gebruiker
+          publish_dir: ./  # Publiceer de root directory (of stel hier je public folder in)
+          user_name: 'GitHub Actions'
+          user_email: 'actions@github.com'
