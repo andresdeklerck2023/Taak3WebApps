@@ -1,25 +1,38 @@
-name: Deploy to Production
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - main  # Alleen wanneer er naar de main branch gepusht wordt
+      - main  # De actie wordt geactiveerd wanneer er naar de 'main' branch gepusht wordt
 
 jobs:
-  build:
-    runs-on: ubuntu-latest  # Gebruik een Ubuntu machine voor de build
+  deploy:
+    runs-on: ubuntu-latest
 
     steps:
+      # Stap 1: Checkout de code
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Stap 2: Stel SSH in voor GitHub Pages deployment
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Stap 3: Stel de achtergrondkleur in vanuit de GitHub Secrets
       - name: Set background color from secret
         run: echo "BACKGROUND_COLOR=${{ secrets.PRODUCTION_BG_COLOR }}" >> $GITHUB_ENV
 
+      # Stap 4: Deploy naar GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3  # Gebruik de action voor deployment naar gh-pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          deploy_key: ${{ secrets.GH_TOKEN }}  # Je deploy sleutel (GitHub Token)
-          publish_dir: ./  # Publiceer de root directory (of stel hier je public folder in)
+          deploy_key: ${{ secrets.SSH_PRIVATE_KEY }}  # Gebruik de SSH private key voor authenticatie
+          publish_dir: ./  # Publiceer de root directory of je public map (bijv. ./build)
           user_name: 'GitHub Actions'
           user_email: 'actions@github.com'
